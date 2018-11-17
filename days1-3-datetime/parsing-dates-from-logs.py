@@ -20,10 +20,10 @@ def convert_to_datetime(line):
        INFO 2014-07-03T23:27:51 supybot Shutdown complete.
        returns:
        datetime(2014, 7, 3, 23, 27, 51)'''
-    rex = r"(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}).+(Shutdown initiated)"
+    rex = r"(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2})"
     match = re.search(rex, line)
     if match is not None:
-        date_str = match.group(1)
+        date_str = match.group()
         return datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S')
     return None
 
@@ -35,7 +35,9 @@ def time_between_shutdowns(loglines):
     datetimes = []
     for line in loglines:
         datetime_item = convert_to_datetime(line)
-        if datetime_item:
+        rex = r"(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}).+(Shutdown initiated)"
+        match = re.search(rex, line)
+        if match is not None:
             datetimes.append(datetime_item)
     return datetimes[1] - datetimes[0]
 
